@@ -38,8 +38,6 @@ const operatorButtons = document.querySelectorAll(".button-oper")
 const decimalButton = document.querySelector(".button-dec");
 const clearButton = document.querySelector("#clear");
 
-let currentOperation = [];
-
 numberButtons.forEach (button => {
     button.addEventListener("click", (e) => {
         if (clearOnNextNum) {
@@ -49,7 +47,6 @@ numberButtons.forEach (button => {
         let pressedButton = e.target;
         let buttonNumber = pressedButton.dataset.num;
         display.value += buttonNumber;
-        currentOperation.push(buttonNumber);
     });
 });
 
@@ -61,34 +58,28 @@ operatorButtons.forEach (button => {
         if (clickCount === 1) {
             let pressedButton = e.target;
             let buttonOperator = pressedButton.dataset.oper;
-            display.value = "";
-            currentOperation.push(buttonOperator);
             decimalButton.disabled = false;
-            let numOneArray = currentOperation.slice(0, -1);
-            numOne = numOneArray.join('');
-            let operatorArray = currentOperation.slice(-1);
-            operator = operatorArray[0];
-            currentOperation.length = 0;
+            numOne = display.value;
+            display.value = buttonOperator;
+            operator = display.value;
+            clearOnNextNum = true;
         } else if (clickCount === 2) {
             let pressedButton = e.target;
             let buttonOperator = pressedButton.dataset.oper;
-            currentOperation.push(buttonOperator);
             decimalButton.disabled = false;
-            let numTwoArray = currentOperation.slice(0, -1);
-            numTwo = numTwoArray.join('');
+            numTwo = display.value;
             let result = operate(operator,numOne,numTwo);
+            operator = buttonOperator;
             display.value = result;
-            let operatorArray = currentOperation.slice(-1);
-            operator = operatorArray[0];
             if (operator === "+" ||
                 operator === "-" ||
                 operator === "*" ||
                 operator === "/") {
-                currentOperation = [result, operator]
+                numOne = result;
                 clickCount = 1;
                 clearOnNextNum = true;
             } else {
-                currentOperation = [result];
+                numOne = result;
                 clickCount = 0;
                 clearOnNextNum = true;
             }
